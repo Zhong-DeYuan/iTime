@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView_add_label"
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="29dp"
+        android:layout_marginLeft="29dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/label_add"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/editText_add_label"
+        android:layout_width="379dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_add_label"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/label_editText_add"
+        tools:ignore="Autofill,LabelFor"
+        />
+
+    <Button
+        android:id="@+id/button_add_label_ok"
+        android:layout_width="69dp"
+        android:layout_height="36dp"
+        android:layout_below="@+id/editText_add_label"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:text="@string/sure"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/button_add_label_quit"
+        android:layout_width="69dp"
+        android:layout_height="36dp"
+        android:layout_below="@+id/editText_add_label"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_toStartOf="@+id/button_add_label_ok"
+        android:layout_toLeftOf="@+id/button_add_label_ok"
+        android:text="@string/quit"
+        android:background="@android:color/transparent"/>
+
+</RelativeLayout>

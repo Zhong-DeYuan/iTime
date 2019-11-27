@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView_cycle"
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="13dp"
+        android:text="@string/cycle"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/editText_cycle"
+        android:layout_width="379dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_cycle"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="@string/input_cycle"
+        android:inputType="number"
+        tools:ignore="Autofill,LabelFor" />
+
+    <Button
+        android:id="@+id/button_cycle_ok"
+        android:layout_width="69dp"
+        android:layout_height="36dp"
+        android:layout_below="@+id/editText_cycle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginRight="18dp"
+        android:background="@android:color/transparent"
+        android:text="@string/sure" />
+
+    <Button
+        android:id="@+id/button_cycle_quit"
+        android:layout_width="69dp"
+        android:layout_height="36dp"
+        android:layout_below="@+id/editText_cycle"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_toStartOf="@+id/button_cycle_ok"
+        android:layout_toLeftOf="@+id/button_cycle_ok"
+        android:background="@android:color/transparent"
+        android:text="@string/quit" />
+
+</RelativeLayout>
