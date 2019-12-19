@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 901;
     public static final int REQUEST_CODE1 = 902;
-    ArrayList<MyItem> theItems;
+    public static ArrayList<MyItem> theItems;
     ArrayList<View> list;
     ViewPager myViewPager;
     ListView listViewShow;
@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         InitData();
         if(Color.getColor() != 0)
             InitColor();
-        myTimeSave = new MyTimeSave(fileDataSource,Color);
-        myTimeSave.startRun();
+//       myTimeSave = new MyTimeSave(fileDataSource,Color);
+//       myTimeSave.startRun();
 
         theTimes = new ArrayList<>();
         for(int i=0;i<5;i++){
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         listViewShow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Start(position,theItems.get(position));
+                Start(position);
             }
         });
 
@@ -152,11 +152,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setBackgroundTintList(ColorStateList.valueOf(Color.getColor()));
     }
 
-    private void Start(int position, MyItem myItem){
+    private void Start(int position){
         Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("Choose_Item",myItem);
-        intent.putExtras(bundle);
         intent.putExtra("thePosition",position);
         intent.putExtra("transerLabels",theLabels);
         startActivityForResult(intent,REQUEST_CODE1);
@@ -192,9 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 case REQUEST_CODE:
                     theLabels = data.getStringArrayListExtra("return_Labels");
                     LabelChange();
-                    Bundle bundle = data.getExtras();
-                    final MyItem returnMyItem = (MyItem) bundle.getSerializable("A_Item");
-                    theItems.add(returnMyItem);
                     for(int i = 0;i<5;i++){
                         theTimes.get(i).Stop();
                     }
@@ -224,15 +218,7 @@ public class MainActivity extends AppCompatActivity {
                 case REQUEST_CODE1:
                     theLabels = data.getStringArrayListExtra("return_Labels");
                     LabelChange();
-                    Bundle bundle = data.getExtras();
-                    MyItem returnItem = (MyItem)bundle.getSerializable("Change_Item");
                     int returnPosition = data.getIntExtra("Change_Position",-1);
-                    theItems.get(returnPosition).setTitle(returnItem.getTitle());
-                    theItems.get(returnPosition).setDescription(returnItem.getDescription());
-                    theItems.get(returnPosition).setCalendar(returnItem.getCalendar());
-                    theItems.get(returnPosition).setPreiod(returnItem.getPreiod());
-                    theItems.get(returnPosition).setPictureResource(returnItem.getPictureResource());
-                    theItems.get(returnPosition).setLabels(returnItem.getLabels());
                     for(int i = 0;i<5;i++){
                         theTimes.get(i).Stop();
                     }
@@ -252,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Start(list.indexOf(view),theItems.get(list.indexOf(view)));
+                    Start(list.indexOf(view));
                 }
             });
             TextView textViewTitle = view.findViewById(R.id.textView_show_title);
@@ -267,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             myTime.setTextView2(textViewHour,0);
             myTime.setTextViewYear(textViewTime);
             ImageView imageView = view.findViewById(R.id.imageView_View_Pager);
-            imageView.setImageResource(theItems.get(i).getPictureResource());
+            imageView.setImageBitmap(theItems.get(i).getBitmap());
             list.add(view);
             i++;
         }
@@ -294,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Start(list.indexOf(view),theInItems.get(list.indexOf(view)));
+                    Start(list.indexOf(view));
                 }
             });
             TextView textViewTitle = view.findViewById(R.id.textView_show_title);
@@ -309,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
             myTime.setTextView2(textViewHour,0);
             myTime.setTextViewYear(textViewTime);
             ImageView imageView = view.findViewById(R.id.imageView_View_Pager);
-            imageView.setImageResource(theInItems.get(i).getPictureResource());
+            imageView.setImageBitmap(theInItems.get(i).getBitmap());
             list.add(view);
             i++;
         }
@@ -411,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
             Calendar calendar = theuserItems.get(position).getCalendar();
             textView4.setText(calendar.get(Calendar.YEAR)+"年"+(calendar.get(Calendar.MONTH)+1)+"月"+calendar.get(Calendar.DAY_OF_MONTH)+"日");
             textView5.setText(theuserItems.get(position).getDescription());
-            imageView1.setImageResource(theuserItems.get(position).getPictureResource());
+            imageView1.setImageBitmap(theuserItems.get(position).getBitmap());
 
             MyTime myTime1 = theTimes.get(position);
             myTime1.setTextView1(textView2,1);
@@ -601,5 +587,23 @@ public class MainActivity extends AppCompatActivity {
         theItems = fileDataSource.loadItem();
         theLabels = fileDataSource.loadLabels();
         Color.setColor(fileDataSource.loadColor());
+    }
+
+    @Override
+    protected void onPause() {
+        fileDataSource.setColor(Color.getColor());
+        fileDataSource.saveItem();
+        fileDataSource.saveColor();
+        fileDataSource.saveLabels();
+        super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        fileDataSource.setColor(Color.getColor());
+        fileDataSource.saveItem();
+        fileDataSource.saveColor();
+        fileDataSource.saveLabels();
+        super.onSaveInstanceState(outState);
     }
 }

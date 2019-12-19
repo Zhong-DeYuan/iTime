@@ -25,7 +25,7 @@ public class DetailActivity extends AppCompatActivity {
     private ImageButton buttonReturn,buttonDelete,buttonEdit;
     private TextView textViewTitle,textViewYear,textViewTime,textViewDescription;
     private int position;
-    private RelativeLayout relativeLayout;
+    private ImageView relativeLayout;
     private MyTime myTime = new MyTime();
     private ArrayList<String> transerLabels;
     MyItem myItem;
@@ -59,10 +59,9 @@ public class DetailActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         transerLabels = intent.getStringArrayListExtra("transerLabels");
         position = intent.getIntExtra("thePosition", -1);
-        Bundle bundle = intent.getExtras();
-        myItem = (MyItem) bundle.getSerializable("Choose_Item");
+        myItem = MainActivity.theItems.get(position);
 
-        relativeLayout.setBackgroundResource(myItem.getPictureResource());
+        relativeLayout.setImageBitmap(myItem.getBitmap());
         textViewTitle.setText(myItem.getTitle());
         textViewDescription.setText(myItem.getDescription());
 
@@ -77,9 +76,6 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent3 = new Intent();
                 intent3.putExtra("Change_Position",position);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Change_Item",myItem);
-                intent3.putExtras(bundle);
                 intent3.putExtra("return_Labels",transerLabels);
                 setResult(RESULT_FIRST_USER,intent3);
                 finish();
@@ -115,9 +111,6 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(DetailActivity.this,AddActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Edit_Item",myItem);
-                intent2.putExtras(bundle);
                 intent2.putExtra("theEditPosition",position);
                 intent2.putExtra("transerLabels",transerLabels);
                 startActivityForResult(intent2,REQUEST_CODE);
@@ -131,13 +124,13 @@ public class DetailActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK){
             switch (requestCode){
                 case REQUEST_CODE:
-                    Bundle bundle = data.getExtras();
-                    MyItem returnItem = (MyItem)bundle.getSerializable("Return_Item");
-                    myItem = returnItem;
+                    int PosiTion = data.getIntExtra("Return_position",-1);
+                    if(PosiTion!=-1)
+                        myItem = MainActivity.theItems.get(PosiTion);
                     myTime.Stop();
                     myTime.setMyTime(myItem.getCalendar(),myItem.getPreiod());
                     myTime.startRun();
-                    relativeLayout.setBackgroundResource(myItem.getPictureResource());
+                    relativeLayout.setImageBitmap(myItem.getBitmap());
                     textViewTitle.setText(myItem.getTitle());
                     textViewDescription.setText(myItem.getDescription());
                     transerLabels = data.getStringArrayListExtra("return_Labels");

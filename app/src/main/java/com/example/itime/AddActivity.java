@@ -9,13 +9,18 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +32,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +64,8 @@ public class AddActivity extends AppCompatActivity {
     private int MyPeriod = 0,PictureResource;
     private MyItem transerItem;
     private int State;
-    private View temp;
+    private ImageView temp;
+    private Bitmap bitmap;
 
     public MyItem thisItem;
     public Calendar calendar= Calendar.getInstance(Locale.CHINA);
@@ -72,8 +80,7 @@ public class AddActivity extends AppCompatActivity {
         transerLabels = intent.getStringArrayListExtra("transerLabels");
         State = intent.getIntExtra("theEditPosition",-1);
         if(State!=-1){
-            Bundle bundle = intent.getExtras();
-            transerItem = (MyItem) bundle.getSerializable("Edit_Item");
+            transerItem =MainActivity.theItems.get(State);
         }
         int Color = intent.getIntExtra("Color",0);
 
@@ -83,6 +90,7 @@ public class AddActivity extends AppCompatActivity {
         String name = "a" + random;
         Context ctx = getBaseContext();
         PictureResource = getResources().getIdentifier(name, "drawable", ctx.getPackageName());
+        bitmap=BitmapFactory.decodeResource(getResources(), PictureResource);
 
         drawableLeft = getResources().getDrawable(R.mipmap.ic_launcher_check);
         drawableLeft.setBounds(0, 0, drawableLeft.getMinimumWidth(), drawableLeft.getMinimumHeight());
@@ -125,24 +133,20 @@ public class AddActivity extends AppCompatActivity {
                             TheLabel.add(Label.get(k).getTextView().getText().toString().trim());
                         k++;
                     }
+                    bitmap = Bitmap.createScaledBitmap(bitmap,800,600,true);
                     if(State==-1) {
-                        thisItem = new MyItem(Title, Description, calendar_new, MyPeriod, PictureResource, TheLabel);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("A_Item", thisItem);
-                        intent.putExtras(bundle);
+                        thisItem = new MyItem(Title, Description, calendar_new, MyPeriod, bitmap, TheLabel);
+                        MainActivity.theItems.add(thisItem);
                         setResult(RESULT_OK, intent);
                         finish();
                     }
                     else{
-                        transerItem.setTitle(Title);
-                        transerItem.setDescription(Description);
-                        transerItem.setCalendar(calendar_new);
-                        transerItem.setPreiod(MyPeriod);
-                        transerItem.setPictureResource(PictureResource);
-                        transerItem.setLabels(TheLabel);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("Return_Item", transerItem);
-                        intent.putExtras(bundle);
+                        MainActivity.theItems.get(State).setTitle(Title);
+                        MainActivity.theItems.get(State).setDescription(Description);
+                        MainActivity.theItems.get(State).setCalendar(calendar_new);
+                        MainActivity.theItems.get(State).setPreiod(MyPeriod);
+                        MainActivity.theItems.get(State).setBytes(bitmap);
+                        MainActivity.theItems.get(State).setLabels(TheLabel);
                         intent.putExtra("Return_position",State);
                         setResult(RESULT_OK, intent);
                         finish();
@@ -216,8 +220,8 @@ public class AddActivity extends AppCompatActivity {
     private void Init1() {
         editTextTitle.setText(transerItem.getTitle());
         editTextDescription.setText(transerItem.getDescription());
-        PictureResource = transerItem.getPictureResource();
-        temp.setBackgroundResource(PictureResource);
+        bitmap = transerItem.getBitmap();
+        temp.setImageBitmap(bitmap);
         theItem1s.get(0).setDescription(transerItem.getCalendar().get(Calendar.YEAR)+"年"+
                 (transerItem.getCalendar().get(Calendar.MONTH)+1)+"月"+transerItem.getCalendar().get(Calendar.DAY_OF_MONTH)+"日");
         theItem1s.get(1).setDescription(transerItem.getPreiod()+"天");
@@ -472,8 +476,23 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void showPictureDialog(){
+        final String[] items = {"从本APP自带的图片中选择","从手机照片中选择" };
+        final AlertDialog.Builder dialog3 = new AlertDialog.Builder (this).setTitle ("请选择获取图片的方式")
+                .setItems (items, new DialogInterface.OnClickListener () {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == 0)
+                            showPictureDialogIncustom();
+                        else if(which == 1)
+                            showPictureDialogInPhoto();
+                    }
+                });
+        dialog3.show ();
+    }
+
+    private void showPictureDialogIncustom(){
         final String[] items = {"一","二" ,"三","四","五","六","七","八","九","十"};
-        AlertDialog.Builder dialog3 = new AlertDialog.Builder (this).setTitle ("本APP提供以下十张图片")
+        AlertDialog.Builder dialog4 = new AlertDialog.Builder (this).setTitle ("本APP提供以下十张图片")
                 .setItems (items, new DialogInterface.OnClickListener () {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -482,10 +501,35 @@ public class AddActivity extends AppCompatActivity {
                         Context ctx=getBaseContext();
                         int resId = getResources().getIdentifier(name, "drawable" , ctx.getPackageName());
                         PictureResource = resId;
-                        temp.setBackgroundResource(resId);
+                        bitmap = BitmapFactory.decodeResource(getResources(), PictureResource);
+                        temp.setImageBitmap(bitmap);
                     }
                 });
-        dialog3.show ();
+        dialog4.show();
+    }
+
+    private void showPictureDialogInPhoto(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode == RESULT_OK){
+            Uri uri = data.getData();
+            Log.e("uri",uri.toString());
+            ContentResolver cr = this.getContentResolver();
+            try{
+                bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                temp.setImageBitmap(bitmap);
+            }
+            catch (FileNotFoundException e){
+                Log.e("Exception",e.getMessage(),e);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void showLabelDialog(){

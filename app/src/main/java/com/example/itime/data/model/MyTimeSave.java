@@ -41,6 +41,6 @@ public class MyTimeSave {
                 timeHandler.sendMessage(message);
             }
         };
-        mTimer.schedule(mTimerTask,0,1000);
+        mTimer.schedule(mTimerTask,0,20000);
     }
 }
