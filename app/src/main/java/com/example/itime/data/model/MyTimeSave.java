@@ -20,7 +20,6 @@ public class MyTimeSave {
             if (msg.what == 1) {
                 fileDataSource.saveItem();
                 fileDataSource.saveLabels();
-                fileDataSource.setColor(colorInt.getColor());
                 fileDataSource.saveColor();
             }
         }

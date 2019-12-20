@@ -1,6 +1,7 @@
 package com.example.itime.data;
 import android.content.Context;
 
+import com.example.itime.data.model.ColorInt;
 import com.example.itime.data.model.MyItem;
 
 import java.io.IOException;
@@ -21,9 +22,9 @@ public class FileDataSource {
 
     private ArrayList<MyItem> MyItems=new ArrayList<MyItem>();
     private ArrayList<String> MyLabels=new ArrayList<>();
-    private int color = 0;
+    private ColorInt color=new ColorInt(0);
 
-    public void setColor(int color) {
+    public void setColor(ColorInt color) {
         this.color = color;
     }
 
@@ -101,12 +102,12 @@ public class FileDataSource {
         return MyLabels;
     }
 
-    public int loadColor() {
+    public ColorInt loadColor() {
         try{
             ObjectInputStream inputStream = new ObjectInputStream(
                     context.openFileInput("Color.txt")
             );
-            color = (int) inputStream.readObject();
+            color = (ColorInt) inputStream.readObject();
             inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();

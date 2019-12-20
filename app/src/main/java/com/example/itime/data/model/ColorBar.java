@@ -11,10 +11,11 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toolbar;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -31,6 +32,8 @@ public class ColorBar extends View {
         this.toolbar = toolbar;
         this.floatingActionButton = floatingActionButton;
         this.colorInt = colorInt;
+        currentThumbOffset = colorInt.getPosition();
+        currentColor = colorInt.getColor();
     }
 
     /**
@@ -150,6 +153,7 @@ public class ColorBar extends View {
                 toolbar.setBackgroundColor(getCurrentColor());
                 floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(getCurrentColor()));
                 colorInt.setColor(getCurrentColor());
+                colorInt.setPosition(currentThumbOffset);
                 break;
             //滑动时
             case MotionEvent.ACTION_MOVE:
@@ -160,6 +164,7 @@ public class ColorBar extends View {
                 toolbar.setBackgroundColor(getCurrentColor());
                 floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(getCurrentColor()));
                 colorInt.setColor(getCurrentColor());
+                colorInt.setPosition(currentThumbOffset);
                 break;
 
         }

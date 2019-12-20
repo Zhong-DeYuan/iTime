@@ -57,4 +57,5 @@
         android:background="@color/White"
         android:textColor="@color/myColor"
         android:text="@string/quit" />
+
 </RelativeLayout>

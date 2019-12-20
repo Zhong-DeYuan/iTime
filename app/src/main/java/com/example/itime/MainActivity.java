@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<MyTime> theTimes;
     private NavigationView navigationView;
     private int ItemID = 1;
-    private ColorInt Color = new ColorInt(0);
+    private ColorInt Color;
     private DrawerLayout drawer;
     private FileDataSource fileDataSource;
     private MyTimeSave myTimeSave;
@@ -550,6 +550,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             final int colorOld = Color.getColor();
+            final int positionOld = Color.getPosition();
             final Dialog dialog;
             final LayoutInflater inflater=LayoutInflater.from(MainActivity.this);
             final View myview=inflater.inflate(R.layout.color_choose_layout,null);//引用自定义布局
@@ -566,6 +567,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Color.setColor(colorOld);
+                    Color.setPosition(positionOld);
                     InitColor();
                     dialog.dismiss();
                 }
@@ -586,12 +588,11 @@ public class MainActivity extends AppCompatActivity {
         fileDataSource=new FileDataSource(this);
         theItems = fileDataSource.loadItem();
         theLabels = fileDataSource.loadLabels();
-        Color.setColor(fileDataSource.loadColor());
+        Color = fileDataSource.loadColor();
     }
 
     @Override
     protected void onPause() {
-        fileDataSource.setColor(Color.getColor());
         fileDataSource.saveItem();
         fileDataSource.saveColor();
         fileDataSource.saveLabels();
@@ -600,7 +601,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        fileDataSource.setColor(Color.getColor());
         fileDataSource.saveItem();
         fileDataSource.saveColor();
         fileDataSource.saveLabels();

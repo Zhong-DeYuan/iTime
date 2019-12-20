@@ -1,10 +1,14 @@
 package com.example.itime.data.model;
 
-public class ColorInt {
+import java.io.Serializable;
+
+public class ColorInt implements Serializable {
     private int color;
+    private int position;
 
     public ColorInt(int color) {
         this.color = color;
+        position = 30;
     }
 
     public int getColor() {
@@ -13,5 +17,13 @@ public class ColorInt {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }
